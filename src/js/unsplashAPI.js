@@ -29,6 +29,14 @@ export class UnsplashAPI {
     return this.#page < Math.ceil(this.#totalPhotos / this.#per_page);
   }
 
+  incrementPage() {
+    this.#page += 1;
+  }
+
+  resetPage() {
+    this.#page = 1;
+  }
+
   get query() {
     return this.#query;
   }

@@ -3,6 +3,7 @@
 import { refs } from './refs';
 import { UnsplashAPI } from './unsplashAPI';
 import { createGalleryCards } from './markup';
+import { spinnerPlay, spinnerStop } from './spinner';
 
 const options = {
   root: null,
@@ -14,6 +15,26 @@ const callback = function (entries, observer) {
   entries.forEach(entry => {
     if (entry.isIntersecting) {
       console.log(entry.target);
+      observer.unobserve(entry.target);
+      unsplashAPI.incrementPage();
+      spinnerPlay();
+      unsplashAPI
+        .getPhotos()
+        .then(({ results }) => {
+          const markup = createGalleryCards(results);
+
+          refs.list.insertAdjacentHTML('beforeend', markup);
+
+          const hasMore = unsplashAPI.hasMorePhotos();
+          if (hasMore) {
+            const item = document.querySelector('.gallery__item:last-child');
+            observer.observe(item);
+          }
+        })
+        .catch(error => console.log(error))
+        .finally(() => {
+          spinnerStop();
+        });
     }
   });
 };
@@ -33,7 +54,9 @@ function onSearch(event) {
     return alert('Input any data!');
   }
   refs.list.innerHTML = '';
+  unsplashAPI.resetPage();
   unsplashAPI.query = value;
+  spinnerPlay();
 
   unsplashAPI
     .getPhotos()
@@ -51,5 +74,8 @@ function onSearch(event) {
         observer.observe(item);
       }
     })
-    .catch(err => console.log(err));
+    .catch(err => console.log(err))
+    .finally(() => {
+      spinnerStop();
+    });
 }
