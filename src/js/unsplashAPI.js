@@ -5,19 +5,28 @@ export class UnsplashAPI {
   #KEY = 'LxvKVGJqiSe6NcEVZOaLXC-f2JIIWZaq_o0WrF8mwJc';
   #query = '';
   #page = 1;
+  #per_page = 15;
+  #totalPhotos = 0;
 
   getPhotos() {
     return fetch(
       `${this.#BASE_URL}?client_id=${this.#KEY}&page=${this.#page}&query=${
         this.#query
-      }`
+      }&per_page=${this.#per_page}&color=black_and_white&orientation=landscape`
     ).then(response => {
       if (!response.ok) {
         throw new Error(response.statusText);
       }
-      console.log(response);
       return response.json();
     });
+  }
+
+  setTotalPhotos(totalPhotos) {
+    this.#totalPhotos = totalPhotos;
+  }
+
+  hasMorePhotos() {
+    return this.#page < Math.ceil(this.#totalPhotos / this.#per_page);
   }
 
   get query() {
