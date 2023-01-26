@@ -3,4 +3,5 @@ export const refs = {
   list: document.querySelector('.js-gallery'),
   backdrop: document.querySelector('[data-load]'),
   spinner: document.querySelector('.js-spinner'),
+  pagination: document.querySelector('#pagination'),
 };
